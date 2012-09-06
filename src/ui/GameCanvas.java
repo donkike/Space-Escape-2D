@@ -23,7 +23,7 @@ public class GameCanvas extends Canvas implements Runnable {
         for (int i = 0; i < 6; i++) {
             planets[i] = new Planet(0, i * 50 + 80, 0.4, (int)(Math.random() * 15) + 5,
                     new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), (int)(Math.random() * 10));
-            planets[i].run();
+            new Thread(planets[i]).start();
         }
     }
 
@@ -32,11 +32,11 @@ public class GameCanvas extends Canvas implements Runnable {
         g.setColor(Color.black);
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        //g.setColor(Color.white);
-        //for (int i = 0; i < 100; i++) {
-        //    int size = (int)(Math.random() * 4);
-        //    g.fillOval((int)(Math.random() * getWidth()), (int)(Math.random() * getHeight()), size, size);
-        //}
+        g.setColor(Color.white);
+        for (int i = 0; i < 100; i++) {
+            int size = (int)(Math.random() * 4);
+            g.fillOval((int)(Math.random() * getWidth()), (int)(Math.random() * getHeight()), size, size);
+        }
 
         g.setColor(sun.getColor());
         Point p = transformCoordinates(new Point(sun.getPositionX() - sun.getRadius(), sun.getPositionY() + sun.getRadius()));
