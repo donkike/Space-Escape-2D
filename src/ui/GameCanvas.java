@@ -2,19 +2,20 @@
 
 package ui;
 
-import objects.Sun;
-import objects.Planet;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Timer;
 import java.util.TimerTask;
+import objects.Planet;
+import objects.Sun;
 
-public class GameCanvas extends Canvas implements Runnable {
+public class GameCanvas extends Canvas {
 
     private Sun sun;
     private Planet[] planets;
+    private Timer timer;
 
     public GameCanvas() {
         sun = new Sun(0, 0, 0.8, 40, Color.orange);
@@ -22,9 +23,16 @@ public class GameCanvas extends Canvas implements Runnable {
         planets = new Planet[6];
         for (int i = 0; i < 6; i++) {
             planets[i] = new Planet(0, i * 50 + 80, 0.4, (int)(Math.random() * 15) + 5,
-                    new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), (int)(Math.random() * 10));
-            new Thread(planets[i]).start();
+                    new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 
+                    (int)(Math.random() * 10), (int)(Math.random() * 2));
         }
+        timer = new Timer();
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    public void run() {
+                        repaint();
+                    }
+                }, 0, 40);
     }
 
     @Override
@@ -52,15 +60,6 @@ public class GameCanvas extends Canvas implements Runnable {
 
     public Point transformCoordinates(Point p) {
         return new Point(p.x + getWidth() / 2, getHeight() / 2 - p.y);
-    }
-
-    public void run() {
-        new Timer(true).scheduleAtFixedRate(
-                new TimerTask() {
-                    public void run() {
-                        repaint();
-                    }
-                }, 0, 40);
     }
 
 }

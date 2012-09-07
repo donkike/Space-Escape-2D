@@ -17,7 +17,5 @@ public class MainFrame extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
-        new Thread(canvas).start();
     }
 }
