@@ -5,18 +5,18 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Polygon;
 
-public class Gem {
-    
+public class Spaceship {
+
     private int positionX;
     private int positionY;
+    private int direction;
     private Color color;
-    private int radius;
-
-    public Gem(int positionX, int positionY, Color color) {
+    
+    public Spaceship(int positionX, int positionY, int direction, Color color) {
         this.positionX = positionX;
         this.positionY = positionY;
+        this.direction = direction;
         this.color = color;
-        radius = 10;
     }
     
     public Polygon getPolygon() {
@@ -25,13 +25,22 @@ public class Gem {
     
     public Polygon getPolygon(Point pt) {
         Polygon p = new Polygon();
-        for(int i = 0; i < 5; i++) {
-            p.addPoint((int) (pt.x + radius * Math.cos(i*2 * Math.PI / 5)), 
-            (int) (pt.y + radius * Math.sin(i*2 * Math.PI /5)));
-        }
+        p.addPoint(pt.x, pt.y + 30);
+        p.addPoint(pt.x + 10, pt.y);
+        p.addPoint(pt.x + 8, pt.y - 10);
+        p.addPoint(pt.x - 8, pt.y - 10);
+        p.addPoint(pt.x - 10, pt.y);
         return p;
     }
     
+    public Color getColor() {
+        return color;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
     public int getPositionX() {
         return positionX;
     }
@@ -39,12 +48,5 @@ public class Gem {
     public int getPositionY() {
         return positionY;
     }
-
-    public int getRadius() {
-        return radius;
-    }
     
-    public Color getColor() {
-        return color;
-    }
 }

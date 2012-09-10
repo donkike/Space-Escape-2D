@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import objects.Gem;
 import objects.Planet;
+import objects.Spaceship;
 import objects.Sun;
 
 public class GameCanvas extends Canvas  implements Runnable{
@@ -17,6 +18,7 @@ public class GameCanvas extends Canvas  implements Runnable{
     private Sun sun;
     private Planet[] planets;
     private Gem[] gems;
+    private Spaceship sp;
     private Timer timer;
 
     public GameCanvas() {
@@ -34,6 +36,8 @@ public class GameCanvas extends Canvas  implements Runnable{
             gems[j] = new Gem((int) (Math.random() * 600 - 300), (int) (Math.random() * 600 - 300), 
                     Color.CYAN);
         }
+        
+        sp = new Spaceship(0,0,1,Color.LIGHT_GRAY);
         timer = new Timer();
         
     }
@@ -64,6 +68,10 @@ public class GameCanvas extends Canvas  implements Runnable{
             p = transformCoordinates(new Point(gem.getPositionX(), gem.getPositionY()));
             g.fillPolygon(gem.getPolygon(p));
         }
+        
+        g.setColor(sp.getColor());
+        p = transformCoordinates(new Point(sp.getPositionX(), sp.getPositionY()));
+        g.fillPolygon(sp.getPolygon(p));
         
     }
 
