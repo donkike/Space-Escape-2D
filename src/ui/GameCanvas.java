@@ -27,12 +27,8 @@ public class GameCanvas extends Canvas {
                     (int)(Math.random() * 10), (int)(Math.random() * 2));
         }
         timer = new Timer();
-        timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    public void run() {
-                        repaint();
-                    }
-                }, 0, 40);
+        startCanvas();
+        
     }
 
     @Override
@@ -60,6 +56,15 @@ public class GameCanvas extends Canvas {
 
     public Point transformCoordinates(Point p) {
         return new Point(p.x + getWidth() / 2, getHeight() / 2 - p.y);
+    }
+    
+    public void startCanvas() {
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    public void run() {
+                        repaint();
+                    }
+                }, 0, 40);
     }
 
 }

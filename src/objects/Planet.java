@@ -36,7 +36,7 @@ public class Planet extends SpaceObject {
                         positionX = (int)(orbitRadius * Math.cos(Math.toRadians(orbitAngle)));
                         positionY = (int)(orbitRadius * Math.sin(Math.toRadians(orbitAngle)));
                     }
-                }, 0, 250 - speed * 20);
+                }, 0, 200 - speed * 20);
     }
     
 }
