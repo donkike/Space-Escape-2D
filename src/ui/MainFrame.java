@@ -15,6 +15,8 @@ public class MainFrame extends JFrame {
         canvas = new GameCanvas();
         add(canvas);
 
+        canvas.run();
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }

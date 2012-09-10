@@ -6,7 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class Planet extends SpaceObject {
+public class Planet extends SpaceObject implements Runnable {
 
     private int speed;
     private double orbitRadius;
@@ -21,10 +21,10 @@ public class Planet extends SpaceObject {
         orbitRadius = Math.sqrt(positionX * positionX + positionY * positionY);
         orbitAngle = Math.toDegrees((Math.asin(positionY / orbitRadius)));
         timer = new Timer();
-        startOrbit();
     }
 
-    public void startOrbit() {
+    @Override
+    public void run() {
         timer.scheduleAtFixedRate(
                 new TimerTask() {
                     public void run() {
@@ -36,7 +36,7 @@ public class Planet extends SpaceObject {
                         positionX = (int)(orbitRadius * Math.cos(Math.toRadians(orbitAngle)));
                         positionY = (int)(orbitRadius * Math.sin(Math.toRadians(orbitAngle)));
                     }
-                }, 0, 200 - speed * 20);
+                }, 0, 60 - speed * 10);
     }
     
 }

@@ -12,7 +12,7 @@ import objects.Gem;
 import objects.Planet;
 import objects.Sun;
 
-public class GameCanvas extends Canvas {
+public class GameCanvas extends Canvas  implements Runnable{
 
     private Sun sun;
     private Planet[] planets;
@@ -26,7 +26,7 @@ public class GameCanvas extends Canvas {
         for (int i = 0; i < 6; i++) {
             planets[i] = new Planet(0, i * 50 + 80, 0.4, (int)(Math.random() * 15) + 5,
                     new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 
-                    (int)(Math.random() * 10), (int)(Math.random() * 2));
+                    (int)(Math.random() * 5), (int)(Math.random() * 2));
         }
         
         gems = new Gem[5];
@@ -35,7 +35,6 @@ public class GameCanvas extends Canvas {
                     Color.CYAN);
         }
         timer = new Timer();
-        startCanvas();
         
     }
 
@@ -76,13 +75,17 @@ public class GameCanvas extends Canvas {
         return new Point(p.x - getWidth() * 2, getHeight() * 2 + p.y);
     }
     
-    public void startCanvas() {
+    @Override
+    public void run() {
+        for (Planet planet : planets) {
+            planet.run();
+        }
         timer.scheduleAtFixedRate(
                 new TimerTask() {
                     public void run() {
                         repaint();
                     }
-                }, 0, 40);
+                }, 0, 20);
     }
 
 }
