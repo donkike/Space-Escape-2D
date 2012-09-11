@@ -13,8 +13,10 @@ public class MainFrame extends JFrame {
         setSize(800, 800);
 
         canvas = new GameCanvas();
+        canvas.setSize(getSize());
         add(canvas);
 
+        canvas.initialize();
         canvas.run();
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

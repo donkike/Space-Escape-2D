@@ -21,25 +21,29 @@ public class GameCanvas extends Canvas  implements Runnable{
     private Spaceship sp;
     private Timer timer;
 
-    public GameCanvas() {
-        sun = new Sun(0, 0, 0.8, 40, Color.orange);
+    public GameCanvas() { }
+    
+    public void initialize() {
+        sun = new Sun(getHeight() / 2, getWidth() / 2, 0.8, 40, Color.orange);
 
         planets = new Planet[6];
         for (int i = 0; i < 6; i++) {
-            planets[i] = new Planet(0, i * 50 + 80, 0.4, (int)(Math.random() * 15) + 5,
-                    new Color((float)Math.random(), (float)Math.random(), (float)Math.random()), 
-                    (int)(Math.random() * 5), (int)(Math.random() * 2));
+            int radius = i * 50 + 80;
+            double angle = Math.random() * 2 * Math.PI;
+            planets[i] = new Planet((int)(radius * Math.sin(angle)), (int)(radius * Math.cos(angle)), 
+                    0.4, (int)(Math.random() * 15) + 5, new Color((float)Math.random(), 
+                    (float)Math.random(), (float)Math.random()), (int)(Math.random() * 5),
+                    (int)Math.pow(-1, (int)(Math.random() * 2)), new Point(sun.getPositionX(), sun.getPositionY()));
         }
         
         gems = new Gem[5];
         for(int j = 0; j < 5; j++) {
-            gems[j] = new Gem((int) (Math.random() * 600 - 300), (int) (Math.random() * 600 - 300), 
+            gems[j] = new Gem((int) (Math.random() * 600 + 100), (int) (Math.random() * 600 + 100), 
                     Color.CYAN);
         }
         
         sp = new Spaceship(0,0,1,Color.LIGHT_GRAY);
         timer = new Timer();
-        
     }
 
     @Override
@@ -54,33 +58,23 @@ public class GameCanvas extends Canvas  implements Runnable{
         }
 
         g.setColor(sun.getColor());
-        Point p = transformCoordinates(new Point(sun.getPositionX() - sun.getRadius(), sun.getPositionY() + sun.getRadius()));
-        g.fillOval(p.x, p.y, sun.getRadius() * 2, sun.getRadius() * 2);
+        g.fillOval(sun.getPositionX() - sun.getRadius(), sun.getPositionY() - sun.getRadius(),
+                sun.getRadius() * 2, sun.getRadius() * 2);
 
         for (Planet planet : planets) {
             g.setColor(planet.getColor());
-            p = transformCoordinates(new Point(planet.getPositionX() - planet.getRadius(), planet.getPositionY() + planet.getRadius()));
-            g.fillOval(p.x, p.y, planet.getRadius() * 2, planet.getRadius() * 2);
+            g.fillOval(planet.getPositionX() - planet.getRadius(), planet.getPositionY() - planet.getRadius(),
+                    planet.getRadius() * 2, planet.getRadius() * 2);
         }
         
         for (Gem gem : gems) {
             g.setColor(gem.getColor());
-            p = transformCoordinates(new Point(gem.getPositionX(), gem.getPositionY()));
-            g.fillPolygon(gem.getPolygon(p));
+            g.fillPolygon(gem.getPolygon());
         }
         
         g.setColor(sp.getColor());
-        p = transformCoordinates(new Point(sp.getPositionX(), sp.getPositionY()));
-        g.fillPolygon(sp.getPolygon(p));
+        g.fillPolygon(sp.getPolygon());
         
-    }
-
-    public Point transformCoordinates(Point p) {
-        return new Point(p.x + getWidth() / 2, getHeight() / 2 - p.y);
-    }
-    
-    public Point untransformCoordinates(Point p) {
-        return new Point(p.x - getWidth() * 2, getHeight() * 2 + p.y);
     }
     
     @Override
