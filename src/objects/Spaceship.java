@@ -25,10 +25,10 @@ public class Spaceship {
     
     public Polygon getPolygon(Point pt) {
         Polygon p = new Polygon();
-        p.addPoint(pt.x, pt.y + 30);
+        p.addPoint(pt.x, pt.y - 30);
         p.addPoint(pt.x + 10, pt.y);
-        p.addPoint(pt.x + 8, pt.y - 10);
-        p.addPoint(pt.x - 8, pt.y - 10);
+        p.addPoint(pt.x + 8, pt.y + 10);
+        p.addPoint(pt.x - 8, pt.y + 10);
         p.addPoint(pt.x - 10, pt.y);
         return p;
     }

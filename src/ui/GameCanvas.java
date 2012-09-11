@@ -42,7 +42,7 @@ public class GameCanvas extends Canvas  implements Runnable{
                     Color.CYAN);
         }
         
-        sp = new Spaceship(0,0,1,Color.LIGHT_GRAY);
+        sp = new Spaceship(50, getHeight() - 100, 1, Color.LIGHT_GRAY);
         timer = new Timer();
     }
 
