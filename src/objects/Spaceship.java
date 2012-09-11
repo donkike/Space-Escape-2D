@@ -2,7 +2,6 @@
 package objects;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Polygon;
 
 public class Spaceship {

@@ -5,15 +5,11 @@ package ui;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.util.Timer;
 import java.util.TimerTask;
-import objects.Gem;
-import objects.Planet;
-import objects.Spaceship;
-import objects.Sun;
+import objects.*;
 
-public class GameCanvas extends Canvas  implements Runnable{
+public class GameCanvas extends Canvas implements Runnable {
 
     private Sun sun;
     private Planet[] planets;
