@@ -22,7 +22,7 @@ public class Planet extends SpaceObject implements Runnable {
         orbitRadius = Math.sqrt(positionX * positionX + positionY * positionY);
         orbitAngle = Math.toDegrees((Math.asin(positionY / orbitRadius)));
         this.orbitCenter = orbitCenter;
-        timer = new Timer();
+        timer = new Timer(true);
     }
 
     @Override

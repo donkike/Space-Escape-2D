@@ -1,5 +1,6 @@
 package util;
 
+import java.awt.Polygon;
 import objects.Point;
 
 
@@ -19,6 +20,21 @@ public class Util {
             }
         }
         return R;
+    }
+    
+    public static Polygon applyTransformation(Polygon polygon, double[][] transformationMatrix) {
+        System.out.println("====================");
+        Point p;
+        Polygon newPolygon = new Polygon();
+        for (int i = 0; i < polygon.npoints; i++) {
+            p = new Point(polygon.xpoints[i], polygon.ypoints[i]);
+            double[][] appliedPoint = multiply(transformationMatrix, p.toMatrix());
+            p = new Point(appliedPoint);
+            System.out.println(p);
+            newPolygon.addPoint(p.x, p.y);
+        }
+        System.out.println("====================");
+        return newPolygon;
     }
 
     public static Point[] applyTransformation(Point[] points, double[][] transformationMatrix) {

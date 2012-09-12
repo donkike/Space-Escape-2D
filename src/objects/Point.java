@@ -9,7 +9,7 @@ public class Point extends java.awt.Point {
     }
     
     public Point(double[][] matrix) {
-        super((int)matrix[0][0], (int)matrix[1][0]);
+        super((int)Math.round(matrix[0][0]), (int)Math.round(matrix[1][0]));
     }
 
     public double[][] toMatrix() {

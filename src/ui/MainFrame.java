@@ -15,7 +15,8 @@ public class MainFrame extends JFrame {
         canvas = new GameCanvas();
         canvas.setSize(getSize());
         add(canvas);
-
+        addKeyListener(canvas);
+        
         canvas.initialize();
         canvas.run();
         

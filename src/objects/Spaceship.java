@@ -3,40 +3,50 @@ package objects;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import util.Util;
+import util.transformations.RotationTransformer;
+import util.transformations.TranslationTransformer;
 
 public class Spaceship {
 
     private int positionX;
     private int positionY;
-    private int direction;
+    private double direction;
     private Color color;
+    private Polygon polygon;
     
-    public Spaceship(int positionX, int positionY, int direction, Color color) {
+    public Spaceship(int positionX, int positionY, double direction, Color color) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.direction = direction;
         this.color = color;
+        polygon = new Polygon();
+        polygon.addPoint(positionX, positionY - 30);
+        polygon.addPoint(positionX + 10, positionY);
+        polygon.addPoint(positionX + 8, positionY + 10);
+        polygon.addPoint(positionX - 8, positionY + 10);
+        polygon.addPoint(positionX - 10, positionY);
+    }
+    
+    public void rotate(double angle) {
+       direction += angle;
+       TranslationTransformer tt = new TranslationTransformer();   
+       RotationTransformer rt = new RotationTransformer();
+       double[][] transformationMatrix = tt.apply(-positionX, -positionY);
+       transformationMatrix = Util.multiply(rt.apply(angle), transformationMatrix);   
+       transformationMatrix = Util.multiply(tt.apply(positionX, positionY), transformationMatrix);
+       polygon = Util.applyTransformation(polygon, transformationMatrix);
     }
     
     public Polygon getPolygon() {
-        return getPolygon(new Point(positionX, positionY));
-    }
-    
-    public Polygon getPolygon(Point pt) {
-        Polygon p = new Polygon();
-        p.addPoint(pt.x, pt.y - 30);
-        p.addPoint(pt.x + 10, pt.y);
-        p.addPoint(pt.x + 8, pt.y + 10);
-        p.addPoint(pt.x - 8, pt.y + 10);
-        p.addPoint(pt.x - 10, pt.y);
-        return p;
+        return polygon;
     }
     
     public Color getColor() {
         return color;
     }
 
-    public int getDirection() {
+    public double getDirection() {
         return direction;
     }
 
@@ -46,6 +56,26 @@ public class Spaceship {
 
     public int getPositionY() {
         return positionY;
+    }
+    
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
+
+    public void setPolygon(Polygon polygon) {
+        this.polygon = polygon;
+    }
+
+    public void setPositionX(int positionX) {
+        this.positionX = positionX;
+    }
+
+    public void setPositionY(int positionY) {
+        this.positionY = positionY;
     }
     
 }

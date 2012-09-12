@@ -5,11 +5,15 @@ package ui;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
 import objects.*;
+import util.transformations.ObjectTransformer;
+import util.transformations.TranslationTransformer;
 
-public class GameCanvas extends Canvas implements Runnable {
+public class GameCanvas extends Canvas implements Runnable, KeyListener {
 
     private Sun sun;
     private Planet[] planets;
@@ -17,7 +21,7 @@ public class GameCanvas extends Canvas implements Runnable {
     private Spaceship sp;
     private Timer timer;
 
-    public GameCanvas() { }
+    public GameCanvas() {  }
     
     public void initialize() {
         sun = new Sun(getHeight() / 2, getWidth() / 2, 0.8, 40, Color.orange);
@@ -39,7 +43,7 @@ public class GameCanvas extends Canvas implements Runnable {
         }
         
         sp = new Spaceship(50, getHeight() - 100, 1, Color.LIGHT_GRAY);
-        timer = new Timer();
+        timer = new Timer(true);
     }
 
     @Override
@@ -84,6 +88,35 @@ public class GameCanvas extends Canvas implements Runnable {
                         repaint();
                     }
                 }, 0, 20);
+    }
+
+    public void keyTyped(KeyEvent ke) {  
+    }
+
+    public void keyPressed(KeyEvent ke) {
+        ObjectTransformer ot = null;
+        double[][] transformationMatrix = null;
+        boolean moveToCentroid = false;
+        switch(ke.getKeyCode()) {
+            case (KeyEvent.VK_UP):
+                ot = new TranslationTransformer();
+                
+                break;
+            case (KeyEvent.VK_DOWN):
+                ot = new TranslationTransformer();
+                
+                break;
+            case (KeyEvent.VK_RIGHT):
+                sp.rotate(Math.PI / 32);
+                break;
+            case (KeyEvent.VK_LEFT):
+                sp.rotate(-Math.PI / 32);
+                break;
+        }
+    }
+
+    public void keyReleased(KeyEvent ke) {
+        
     }
 
 }
