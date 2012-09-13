@@ -1,6 +1,8 @@
 
 package objects;
 
+import java.awt.Polygon;
+
 
 public class Point extends java.awt.Point {
     
@@ -32,6 +34,16 @@ public class Point extends java.awt.Point {
             sumY += points[i].y;
         }
         Point p = new Point(sumX / points.length, sumY / points.length);
+        return p;
+    }
+    
+    public static Point getCentroid(Polygon polygon) {
+        int sumX = 0, sumY = 0;
+        for (int i = 0; i < polygon.npoints; i++) {
+            sumX += polygon.xpoints[i];
+            sumY += polygon.ypoints[i];
+        }
+        Point p = new Point(sumX / polygon.npoints, sumY / polygon.npoints);
         return p;
     }
     

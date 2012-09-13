@@ -84,6 +84,10 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
     }
     
+    public void updateWorld() {        
+        
+    }
+    
     @Override
     public void run() {
         for (Planet planet : planets) {
@@ -93,6 +97,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         timer.scheduleAtFixedRate(
                 new TimerTask() {
                     public void run() {
+                        updateWorld();
                         repaint();
                     }
                 }, 0, 20);
@@ -106,16 +111,16 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
             case (KeyEvent.VK_UP): 
-                sp.accelerate(0.2);
-                break;
-            case (KeyEvent.VK_DOWN):
                 sp.accelerate(-0.2);
                 break;
+            case (KeyEvent.VK_DOWN):
+                sp.accelerate(0.2);
+                break;
             case (KeyEvent.VK_RIGHT):
-                sp.rotate(Math.toRadians(18));
+                sp.rotate(Math.toRadians(30));
                 break;
             case (KeyEvent.VK_LEFT):
-                sp.rotate(-Math.toRadians(18));
+                sp.rotate(-Math.toRadians(30));
                 break;
         }
     }

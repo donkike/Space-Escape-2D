@@ -19,14 +19,12 @@ public class Spaceship implements Runnable {
     private double direction;
     private Color color;
     private Polygon polygon;
-    private Timer timer;
     
     public Spaceship(int positionX, int positionY, double direction, Color color) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.direction = direction;
         this.color = color;
-        timer = new Timer(true);
         accX = accY = 0;
         polygon = new Polygon();
         polygon.addPoint(positionX, positionY - 30);
@@ -40,27 +38,30 @@ public class Spaceship implements Runnable {
         direction += angle;
         TranslationTransformer tt = new TranslationTransformer();
         RotationTransformer rt = new RotationTransformer();
-        double[][] transformationMatrix = tt.apply(-positionX, -positionY);
+        Point centroid = Point.getCentroid(polygon);
+        double[][] transformationMatrix = tt.apply(-centroid.x, -centroid.y);
         transformationMatrix = Util.multiply(rt.apply(angle), transformationMatrix);
-        transformationMatrix = Util.multiply(tt.apply(positionX, positionY), transformationMatrix);
+        transformationMatrix = Util.multiply(tt.apply(centroid.x, centroid.y), transformationMatrix);
         polygon = Util.applyTransformation(polygon, transformationMatrix);
     }
     
     public void accelerate(double delta) {
-            double newAccX = accX + delta * Math.cos(direction);
-            double newAccY = accY + delta * Math.sin(direction);
-            if (Math.abs(newAccX) < 1)
-                accX = newAccX;
-            if (Math.abs(newAccY) < 1)
-                accY = newAccY;        
+        accelerate(delta, direction);
+    }
+    
+    public void accelerate(double delta, double direction) {
+        double newAccX = accX + delta * Math.cos(direction);
+        double newAccY = accY + delta * Math.sin(direction);
+        if (Math.abs(newAccX) < 1)
+            accX = newAccX;
+        if (Math.abs(newAccY) < 1)
+            accY = newAccY;
     }
     
     public void move() {
         TranslationTransformer tt = new TranslationTransformer();
-        double[][] transformationMatrix = tt.apply(accX * 5, -accY * 5);
+        double[][] transformationMatrix = tt.apply(accX * 5, accY * 5);
         polygon = Util.applyTransformation(polygon, transformationMatrix);
-        positionX += accX * 5;
-        positionY -= accY * 5;
     }
     
     public Polygon getPolygon() {
@@ -102,6 +103,10 @@ public class Spaceship implements Runnable {
     public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
+    
+    public double getAcceleration() {
+        return Math.sqrt(accX * accX + accY * accY);
+    }
 
     public void run() {
         new Thread() {
@@ -109,8 +114,12 @@ public class Spaceship implements Runnable {
             public void run() {
                 while(true) {
                     move();
+                    int movingX = Double.compare(accX, 0);
+                    int movingY = Double.compare(accY, 0);                    
+                    accX += 0.01 * -movingX;
+                    accY += 0.01 * -movingY;
                     try {
-                        sleep(20);
+                        sleep(60);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Spaceship.class.getName()).log(Level.SEVERE, null, ex);
                     }
