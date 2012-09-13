@@ -18,6 +18,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     private Gem[] gems;
     private Spaceship sp;
     private Timer timer;
+    private Point[] stars;
 
     public GameCanvas() {  }
     
@@ -40,6 +41,12 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                     Color.CYAN);
         }
         
+        stars = new Point[200];
+        for (int i = 0; i < stars.length; i++) {
+            stars[i] = new Point((int)(Math.random() * getWidth()),
+                    (int)(Math.random() * getHeight())); 
+        }
+        
         sp = new Spaceship(50, getHeight() - 100, 1, Color.LIGHT_GRAY);
         timer = new Timer(true);
     }
@@ -50,9 +57,11 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.fillRect(0, 0, getWidth(), getHeight());
 
         g.setColor(Color.white);
-        for (int i = 0; i < 100; i++) {
-            int size = (int)(Math.random() * 4);
-            g.fillOval((int)(Math.random() * getWidth()), (int)(Math.random() * getHeight()), size, size);
+        for (Point star : stars) {            
+            int size = (int)(Math.random() * 4);          
+            star.x = (star.x + 1) % getHeight();
+            star.y = (star.y + 1) % getHeight();
+            g.fillOval(star.x, star.y, size, size);
         }
 
         g.setColor(sun.getColor());
