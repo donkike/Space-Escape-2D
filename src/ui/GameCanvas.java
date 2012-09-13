@@ -59,7 +59,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.setColor(Color.white);
         for (Point star : stars) {            
             int size = (int)(Math.random() * 4);          
-            star.x = (star.x + 1) % getHeight();
+            star.x = (star.x + 2) % getWidth();
             star.y = (star.y + 1) % getHeight();
             g.fillOval(star.x, star.y, size, size);
         }
