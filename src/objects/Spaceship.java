@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Polygon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ui.GameCanvas;
 import util.Util;
 import util.transformations.RotationTransformer;
 import util.transformations.TranslationTransformer;
@@ -16,6 +17,7 @@ public class Spaceship implements Runnable {
     private double direction;
     private Color color;
     private Polygon polygon;
+    private Thread thread;
     
     public Spaceship(int positionX, int positionY, double direction, Color color) {
         this.direction = direction;
@@ -33,7 +35,7 @@ public class Spaceship implements Runnable {
         direction += angle;
         TranslationTransformer tt = new TranslationTransformer();
         RotationTransformer rt = new RotationTransformer();
-        Point centroid = Point.getCentroid(polygon);
+        Point centroid = getPosition();
         double[][] transformationMatrix = tt.apply(-centroid.x, -centroid.y);
         transformationMatrix = Util.multiply(rt.apply(angle), transformationMatrix);
         transformationMatrix = Util.multiply(tt.apply(centroid.x, centroid.y), transformationMatrix);
@@ -86,13 +88,17 @@ public class Spaceship implements Runnable {
     public double getAcceleration() {
         return Math.sqrt(accX * accX + accY * accY);
     }
+    
+    public Point getPosition() {
+        return Point.getCentroid(polygon);
+    }
 
     @Override
     public void run() {
-        new Thread() {
+        thread = new Thread() {
             @Override
             public void run() {
-                while(true) {
+                while(!GameCanvas.GAME_OVER) {
                     move();
                     int movingX = Double.compare(accX, 0);
                     int movingY = Double.compare(accY, 0);                    
@@ -105,7 +111,8 @@ public class Spaceship implements Runnable {
                     }
                 }
             }
-        }.start();
+        };
+        thread.start();
     }
     
 }

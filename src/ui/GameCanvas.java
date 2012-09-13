@@ -7,18 +7,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import objects.*;
 
 public class GameCanvas extends Canvas implements Runnable, KeyListener {
 
+    public static boolean GAME_OVER = false;
+    
     private Sun sun;
     private Planet[] planets;
     private Gem[] gems;
     private Spaceship sp;
-    private Timer timer;
     private Point[] stars;
+    private Thread mainThread;
 
     public GameCanvas() {  }
     
@@ -31,7 +33,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             double angle = Math.random() * 2 * Math.PI;
             planets[i] = new Planet((int)(radius * Math.sin(angle)), (int)(radius * Math.cos(angle)), 
                     0.4, (int)(Math.random() * 15) + 5, new Color((float)Math.random(), 
-                    (float)Math.random(), (float)Math.random()), (int)(Math.random() * 5),
+                    (float)Math.random(), (float)Math.random()), Math.random() * Planet.MAX_SPEED,
                     (int)Math.pow(-1, (int)(Math.random() * 2)), new Point(sun.getPositionX(), sun.getPositionY()));
         }
         
@@ -48,7 +50,6 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         }
         
         sp = new Spaceship(50, getHeight() - 100, Math.toRadians(90), Color.LIGHT_GRAY);
-        timer = new Timer(true);
     }
 
     @Override
@@ -85,22 +86,32 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     }
     
     public void updateWorld() {        
-        
+        for (Planet planet : planets)
+            planet.move();
     }
     
     @Override
     public void run() {
-        for (Planet planet : planets) {
-            planet.run();
-        }
-        sp.run();
-        timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    public void run() {
-                        updateWorld();
-                        repaint();
+        mainThread = new Thread() {
+            @Override
+            public void run() {
+                while (!GameCanvas.GAME_OVER) {
+                    updateWorld();
+                    repaint();
+                    try {
+                        sleep(20);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }, 0, 20);
+                }
+            }
+        };
+        mainThread.start();
+        sp.run();
+    }
+    
+    public void stop() {
+        GameCanvas.GAME_OVER = true;
     }
 
     @Override
