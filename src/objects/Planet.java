@@ -25,8 +25,8 @@ public class Planet extends SpaceObject {
     
     public void move() {
         orbitAngle = (orbitAngle + (speed * direction)) % 360;
-        positionX = orbitCenter.x + (int)(orbitRadius * Math.cos(Math.toRadians(orbitAngle)));
-        positionY = orbitCenter.y + (int)(orbitRadius * Math.sin(Math.toRadians(orbitAngle)));
+        position.x = orbitCenter.x + (int)(orbitRadius * Math.cos(Math.toRadians(orbitAngle)));
+        position.y = orbitCenter.y + (int)(orbitRadius * Math.sin(Math.toRadians(orbitAngle)));
     }
     
 }

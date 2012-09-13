@@ -7,8 +7,7 @@ import java.awt.Color;
 
 public class SpaceObject {
 
-    protected int positionX;
-    protected int positionY;
+    protected Point position;
     protected double gravity;
     protected int radius;
     protected int gravityRadius;
@@ -17,14 +16,13 @@ public class SpaceObject {
     public SpaceObject() {}
 
     public SpaceObject(int positionX, int positionY, double gravity, int radius, Color color) {
-        this.positionX = positionX;
-        this.positionY = positionY;
+        this.position = new Point(positionX, positionY);
         this.gravity = gravity;
         this.radius = radius;
-        this.gravityRadius = radius * 2;
+        this.gravityRadius = radius * 6;
         this.color = color;
     }
-
+    
     public double getGravity() {
         return gravity;
     }
@@ -33,12 +31,8 @@ public class SpaceObject {
         return gravityRadius;
     }
 
-    public int getPositionX() {
-        return positionX;
-    }
-
-    public int getPositionY() {
-        return positionY;
+    public Point getPosition() {
+        return position;
     }
 
     public int getRadius() {

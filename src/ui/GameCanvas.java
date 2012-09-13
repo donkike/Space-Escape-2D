@@ -29,12 +29,12 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
 
         planets = new Planet[6];
         for (int i = 0; i < 6; i++) {
-            int radius = i * 50 + 80;
+            int radius = i * 50 + 90;
             double angle = Math.random() * 2 * Math.PI;
             planets[i] = new Planet((int)(radius * Math.sin(angle)), (int)(radius * Math.cos(angle)), 
-                    0.4, (int)(Math.random() * 15) + 5, new Color((float)Math.random(), 
+                    0.4, (int)(Math.random() * 15) + 10, new Color((float)Math.random(), 
                     (float)Math.random(), (float)Math.random()), Math.random() * Planet.MAX_SPEED,
-                    (int)Math.pow(-1, (int)(Math.random() * 2)), new Point(sun.getPositionX(), sun.getPositionY()));
+                    (int)Math.pow(-1, (int)(Math.random() * 2)), new Point(sun.getPosition().x, sun.getPosition().y));
         }
         
         gems = new Gem[5];
@@ -66,12 +66,17 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         }
 
         g.setColor(sun.getColor());
-        g.fillOval(sun.getPositionX() - sun.getRadius(), sun.getPositionY() - sun.getRadius(),
+        g.fillOval(sun.getPosition().x - sun.getRadius(), sun.getPosition().y - sun.getRadius(),
                 sun.getRadius() * 2, sun.getRadius() * 2);
 
         for (Planet planet : planets) {
+            
+//            g.setColor(Color.white);
+//            g.fillOval(planet.getPosition().x - planet.getGravityRadius(), planet.getPosition().y - planet.getGravityRadius(),
+//                    planet.getGravityRadius() * 2, planet.getGravityRadius() * 2);
+            
             g.setColor(planet.getColor());
-            g.fillOval(planet.getPositionX() - planet.getRadius(), planet.getPositionY() - planet.getRadius(),
+            g.fillOval(planet.getPosition().x - planet.getRadius(), planet.getPosition().y - planet.getRadius(),
                     planet.getRadius() * 2, planet.getRadius() * 2);
         }
         
@@ -86,8 +91,17 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     }
     
     public void updateWorld() {        
-        for (Planet planet : planets)
+        for (Planet planet : planets) {
             planet.move();
+            double distance = Math.pow(sp.getPosition().x - planet.getPosition().x, 2) +
+                    Math.pow(sp.getPosition().y - planet.getPosition().y, 2);
+            double r2 = Math.pow(planet.getGravityRadius(), 2);
+            if (distance < r2) {
+                // TODO attract spaceship due to gravity
+                System.out.println("Close to planet!");
+            }
+            
+        }
     }
     
     @Override
