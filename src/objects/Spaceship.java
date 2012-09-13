@@ -3,23 +3,31 @@ package objects;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.Util;
 import util.transformations.RotationTransformer;
 import util.transformations.TranslationTransformer;
 
-public class Spaceship {
+public class Spaceship implements Runnable {
 
     private int positionX;
     private int positionY;
+    private double accX;
+    private double accY;
     private double direction;
     private Color color;
     private Polygon polygon;
+    private Timer timer;
     
     public Spaceship(int positionX, int positionY, double direction, Color color) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.direction = direction;
         this.color = color;
+        timer = new Timer(true);
+        accX = accY = 0;
         polygon = new Polygon();
         polygon.addPoint(positionX, positionY - 30);
         polygon.addPoint(positionX + 10, positionY);
@@ -29,7 +37,6 @@ public class Spaceship {
     }
     
     public void rotate(double angle) {
-        System.out.println(angle);
         direction += angle;
         TranslationTransformer tt = new TranslationTransformer();
         RotationTransformer rt = new RotationTransformer();
@@ -37,6 +44,23 @@ public class Spaceship {
         transformationMatrix = Util.multiply(rt.apply(angle), transformationMatrix);
         transformationMatrix = Util.multiply(tt.apply(positionX, positionY), transformationMatrix);
         polygon = Util.applyTransformation(polygon, transformationMatrix);
+    }
+    
+    public void accelerate(double delta) {
+            double newAccX = accX + delta * Math.cos(direction);
+            double newAccY = accY + delta * Math.sin(direction);
+            if (Math.abs(newAccX) < 1)
+                accX = newAccX;
+            if (Math.abs(newAccY) < 1)
+                accY = newAccY;        
+    }
+    
+    public void move() {
+        TranslationTransformer tt = new TranslationTransformer();
+        double[][] transformationMatrix = tt.apply(accX * 5, -accY * 5);
+        polygon = Util.applyTransformation(polygon, transformationMatrix);
+        positionX += accX * 5;
+        positionY -= accY * 5;
     }
     
     public Polygon getPolygon() {
@@ -77,6 +101,22 @@ public class Spaceship {
 
     public void setPositionY(int positionY) {
         this.positionY = positionY;
+    }
+
+    public void run() {
+        new Thread() {
+            @Override
+            public void run() {
+                while(true) {
+                    move();
+                    try {
+                        sleep(20);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Spaceship.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }.start();
     }
     
 }

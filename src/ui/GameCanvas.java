@@ -47,7 +47,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                     (int)(Math.random() * getHeight())); 
         }
         
-        sp = new Spaceship(50, getHeight() - 100, 1, Color.LIGHT_GRAY);
+        sp = new Spaceship(50, getHeight() - 100, Math.toRadians(90), Color.LIGHT_GRAY);
         timer = new Timer(true);
     }
 
@@ -89,6 +89,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         for (Planet planet : planets) {
             planet.run();
         }
+        sp.run();
         timer.scheduleAtFixedRate(
                 new TimerTask() {
                     public void run() {
@@ -104,9 +105,11 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
-            case (KeyEvent.VK_UP):                
+            case (KeyEvent.VK_UP): 
+                sp.accelerate(0.2);
                 break;
-            case (KeyEvent.VK_DOWN):                
+            case (KeyEvent.VK_DOWN):
+                sp.accelerate(-0.2);
                 break;
             case (KeyEvent.VK_RIGHT):
                 sp.rotate(Math.toRadians(18));
