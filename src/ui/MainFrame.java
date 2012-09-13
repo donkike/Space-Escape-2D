@@ -15,12 +15,14 @@ public class MainFrame extends JFrame {
         canvas = new GameCanvas();
         canvas.setSize(getSize());
         add(canvas);
-        addKeyListener(canvas);
         
         canvas.initialize();
         canvas.run();
         
+        requestFocus();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        
+        addKeyListener(canvas);
     }
 }

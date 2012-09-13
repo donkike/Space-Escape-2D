@@ -29,13 +29,14 @@ public class Spaceship {
     }
     
     public void rotate(double angle) {
-       direction += angle;
-       TranslationTransformer tt = new TranslationTransformer();   
-       RotationTransformer rt = new RotationTransformer();
-       double[][] transformationMatrix = tt.apply(-positionX, -positionY);
-       transformationMatrix = Util.multiply(rt.apply(angle), transformationMatrix);   
-       transformationMatrix = Util.multiply(tt.apply(positionX, positionY), transformationMatrix);
-       polygon = Util.applyTransformation(polygon, transformationMatrix);
+        System.out.println(angle);
+        direction += angle;
+        TranslationTransformer tt = new TranslationTransformer();
+        RotationTransformer rt = new RotationTransformer();
+        double[][] transformationMatrix = tt.apply(-positionX, -positionY);
+        transformationMatrix = Util.multiply(rt.apply(angle), transformationMatrix);
+        transformationMatrix = Util.multiply(tt.apply(positionX, positionY), transformationMatrix);
+        polygon = Util.applyTransformation(polygon, transformationMatrix);
     }
     
     public Polygon getPolygon() {

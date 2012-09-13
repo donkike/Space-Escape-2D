@@ -10,8 +10,6 @@ import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
 import objects.*;
-import util.transformations.ObjectTransformer;
-import util.transformations.TranslationTransformer;
 
 public class GameCanvas extends Canvas implements Runnable, KeyListener {
 
@@ -90,31 +88,27 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 }, 0, 20);
     }
 
-    public void keyTyped(KeyEvent ke) {  
+    @Override
+    public void keyTyped(KeyEvent ke) {
     }
 
+    @Override
     public void keyPressed(KeyEvent ke) {
-        ObjectTransformer ot = null;
-        double[][] transformationMatrix = null;
-        boolean moveToCentroid = false;
         switch(ke.getKeyCode()) {
-            case (KeyEvent.VK_UP):
-                ot = new TranslationTransformer();
-                
+            case (KeyEvent.VK_UP):                
                 break;
-            case (KeyEvent.VK_DOWN):
-                ot = new TranslationTransformer();
-                
+            case (KeyEvent.VK_DOWN):                
                 break;
             case (KeyEvent.VK_RIGHT):
-                sp.rotate(Math.PI / 32);
+                sp.rotate(Math.toRadians(18));
                 break;
             case (KeyEvent.VK_LEFT):
-                sp.rotate(-Math.PI / 32);
+                sp.rotate(-Math.toRadians(18));
                 break;
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent ke) {
         
     }
