@@ -105,7 +105,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 if (difference.y > 0) direction = Math.toRadians(270);
                 else direction = Math.toRadians(90);
             }
-            sp.accelerate(0.02, direction);
+            sp.accelerate(0.015, direction);
         }
     }
     
