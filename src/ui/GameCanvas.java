@@ -2,13 +2,12 @@
 
 package ui;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import objects.Point;
 import objects.*;
 
 public class GameCanvas extends Canvas implements Runnable, KeyListener {
@@ -93,6 +92,46 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.setColor(sp.getColor());
         g.fillPolygon(sp.getPolygon());
         
+        if (GameCanvas.GAME_OVER)
+            paintGameOver(g);
+        
+    }
+    
+    public void paintGameOver(Graphics g) {        
+        g.setColor(new Color(0, 0, 0, 150));        
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
+        g.setColor(Color.red);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 80));
+        g.drawString("Game Over", getHeight() / 2 - 170, getWidth() / 2 - 60);
+    }
+    
+    public void checkCollisions() {
+        Polygon p = sp.getPolygon();
+        double point;
+        for(Planet planet : planets) {
+            for(int i=0; i < p.npoints; i++) {
+                point = Math.pow(p.xpoints[i] - planet.getPosition().x, 2) + Math.pow(p.ypoints[i] - planet.getPosition().y,2);
+                if (point < Math.pow(planet.getRadius(),2)) {
+                    GameCanvas.GAME_OVER = true;
+                }
+            }
+        }
+        for(int i=0; i < p.npoints; i++) {
+            point = Math.pow(p.xpoints[i] - sun.getPosition().x,2) + Math.pow(p.ypoints[i] - sun.getPosition().y,2);
+            if (point < Math.pow(sun.getRadius(),2)) {
+                GameCanvas.GAME_OVER = true;
+            }
+        }
+        Polygon g;
+        for(Gem gem : gems) {
+            g = gem.getPolygon();
+            for(int i=0; i < g.npoints; i++) {
+                if (p.contains(g.xpoints[i], g.ypoints[i])) {
+                    gem.collect();
+                }
+            }
+        }
     }
     
     public void calculateGravity(SpaceObject so) {
@@ -110,9 +149,10 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             sp.accelerate(0.015, direction);
         }
     }
+
     
-    public void updateWorld() { 
-        calculateGravity(sun);       
+    public void updateWorld() {
+        calculateGravity(sun);         
         for (Planet planet : planets) {
             planet.move();
             calculateGravity(planet);            
@@ -127,6 +167,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 while (!GameCanvas.GAME_OVER) {
                     updateWorld();
                     repaint();
+                    checkCollisions();
                     try {
                         sleep(20);
                     } catch (InterruptedException ex) {
@@ -137,10 +178,6 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         };
         mainThread.start();
         sp.run();
-    }
-    
-    public void stop() {
-        GameCanvas.GAME_OVER = true;
     }
 
     @Override
