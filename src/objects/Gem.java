@@ -46,4 +46,8 @@ public class Gem {
     public Color getColor() {
         return color;
     }
+    
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
 }

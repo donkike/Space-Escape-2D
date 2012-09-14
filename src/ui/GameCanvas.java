@@ -5,10 +5,12 @@ package ui;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import objects.*;
 
 public class GameCanvas extends Canvas implements Runnable, KeyListener {
@@ -85,6 +87,34 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
     }
     
+    public void checkCollisions() {
+        Polygon p = sp.getPolygon();
+        double point;
+        for(Planet planet : planets) {
+            for(int i=0; i < p.npoints; i++) {
+                point = Math.pow(p.xpoints[i]-planet.getPositionX(), 2) + Math.pow(p.ypoints[i]-planet.getPositionY(),2);
+                if (point < Math.pow(planet.getRadius(),2)) {
+                    GameCanvas.GAME_OVER = true;
+                }
+            }
+        }
+        for(int i=0; i < p.npoints; i++) {
+            point = Math.pow(p.xpoints[i]-sun.getPositionX(),2) + Math.pow(p.ypoints[i]-sun.getPositionY(),2);
+            if (point < Math.pow(sun.getRadius(),2)) {
+                GameCanvas.GAME_OVER = true;
+            }
+        }
+        Polygon g;
+        for(Gem gem : gems) {
+            g = gem.getPolygon();
+            for(int i=0; i < g.npoints; i++) {
+                if (p.contains(g.xpoints[i], g.ypoints[i])) {
+                    gem.setRadius(0);
+                }
+            }
+        }
+    }
+    
     public void updateWorld() {        
         for (Planet planet : planets)
             planet.move();
@@ -98,12 +128,14 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 while (!GameCanvas.GAME_OVER) {
                     updateWorld();
                     repaint();
+                    checkCollisions();
                     try {
                         sleep(20);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                JOptionPane.showMessageDialog(null, "Game Over!");
             }
         };
         mainThread.start();
