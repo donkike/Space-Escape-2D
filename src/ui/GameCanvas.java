@@ -63,19 +63,21 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             star.x = (star.x + 2) % getWidth();
             star.y = (star.y + 1) % getHeight();
             g.fillOval(star.x, star.y, size, size);
-        }
+        }       
+        
+        
+        g.setColor(new Color(1.0f, 0.0f, 0.0f, 0.2f));
+        g.fillOval(sun.getPosition().x - sun.getGravityRadius(), sun.getPosition().y - sun.getGravityRadius(),
+                sun.getGravityRadius() * 2, sun.getGravityRadius() * 2);
 
         g.setColor(sun.getColor());
         g.fillOval(sun.getPosition().x - sun.getRadius(), sun.getPosition().y - sun.getRadius(),
                 sun.getRadius() * 2, sun.getRadius() * 2);
-        g.setColor(Color.red);
-            g.drawOval(sun.getPosition().x - sun.getGravityRadius(), sun.getPosition().y - sun.getGravityRadius(),
-                    sun.getGravityRadius() * 2, sun.getGravityRadius() * 2);
 
         for (Planet planet : planets) {
             
-            g.setColor(Color.red);
-            g.drawOval(planet.getPosition().x - planet.getGravityRadius(), planet.getPosition().y - planet.getGravityRadius(),
+            g.setColor(new Color(1.0f, 0.0f, 0.0f, 0.2f));
+            g.fillOval(planet.getPosition().x - planet.getGravityRadius(), planet.getPosition().y - planet.getGravityRadius(),
                     planet.getGravityRadius() * 2, planet.getGravityRadius() * 2);
             
             g.setColor(planet.getColor());
