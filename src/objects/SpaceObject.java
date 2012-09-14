@@ -19,7 +19,7 @@ public class SpaceObject {
         this.position = new Point(positionX, positionY);
         this.gravity = gravity;
         this.radius = radius;
-        this.gravityRadius = radius * 6;
+        this.gravityRadius = radius * 4;
         this.color = color;
     }
     

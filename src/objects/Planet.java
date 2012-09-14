@@ -6,7 +6,7 @@ import java.awt.Color;
 
 public class Planet extends SpaceObject {
     
-    public static final int MAX_SPEED = 2;
+    public static final int MAX_SPEED = 1;
 
     private double speed;
     private double orbitRadius;

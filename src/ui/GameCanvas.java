@@ -68,12 +68,15 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.setColor(sun.getColor());
         g.fillOval(sun.getPosition().x - sun.getRadius(), sun.getPosition().y - sun.getRadius(),
                 sun.getRadius() * 2, sun.getRadius() * 2);
+        g.setColor(Color.red);
+            g.drawOval(sun.getPosition().x - sun.getGravityRadius(), sun.getPosition().y - sun.getGravityRadius(),
+                    sun.getGravityRadius() * 2, sun.getGravityRadius() * 2);
 
         for (Planet planet : planets) {
             
-//            g.setColor(Color.white);
-//            g.fillOval(planet.getPosition().x - planet.getGravityRadius(), planet.getPosition().y - planet.getGravityRadius(),
-//                    planet.getGravityRadius() * 2, planet.getGravityRadius() * 2);
+            g.setColor(Color.red);
+            g.drawOval(planet.getPosition().x - planet.getGravityRadius(), planet.getPosition().y - planet.getGravityRadius(),
+                    planet.getGravityRadius() * 2, planet.getGravityRadius() * 2);
             
             g.setColor(planet.getColor());
             g.fillOval(planet.getPosition().x - planet.getRadius(), planet.getPosition().y - planet.getRadius(),
@@ -90,17 +93,27 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
     }
     
-    public void updateWorld() {        
+    public void calculateGravity(SpaceObject so) {
+        Point difference = so.getPosition().substract(sp.getPosition());
+        double distance = difference.x * difference.x + difference.y * difference.y;
+        double r2 = Math.pow(so.getGravityRadius(), 2);
+        if (distance < r2) {
+            double direction;
+            if (difference.x != 0) {
+                direction = Math.atan2(difference.y, difference.x);
+            } else {
+                if (difference.y > 0) direction = Math.toRadians(270);
+                else direction = Math.toRadians(90);
+            }
+            sp.accelerate(0.02, direction);
+        }
+    }
+    
+    public void updateWorld() { 
+        calculateGravity(sun);       
         for (Planet planet : planets) {
             planet.move();
-            double distance = Math.pow(sp.getPosition().x - planet.getPosition().x, 2) +
-                    Math.pow(sp.getPosition().y - planet.getPosition().y, 2);
-            double r2 = Math.pow(planet.getGravityRadius(), 2);
-            if (distance < r2) {
-                // TODO attract spaceship due to gravity
-                System.out.println("Close to planet!");
-            }
-            
+            calculateGravity(planet);            
         }
     }
     
