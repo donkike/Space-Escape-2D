@@ -109,7 +109,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             g = gem.getPolygon();
             for(int i=0; i < g.npoints; i++) {
                 if (p.contains(g.xpoints[i], g.ypoints[i])) {
-                    gem.setRadius(0);
+                    gem.collect();
                 }
             }
         }

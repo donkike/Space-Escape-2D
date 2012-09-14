@@ -10,12 +10,14 @@ public class Gem {
     private int positionY;
     private Color color;
     private int radius;
+    private boolean collected;
 
     public Gem(int positionX, int positionY, Color color) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.color = color;
         radius = 10;
+        collected = false;
     }
     
     public Polygon getPolygon() {
@@ -29,6 +31,15 @@ public class Gem {
             (int) (pt.y + radius * Math.sin(i*2 * Math.PI /5)));
         }
         return p;
+    }
+    
+    public void collect() {
+        radius = 0;
+        collected = true;
+    }
+    
+    public boolean isCollected() {
+        return collected;
     }
     
     public int getPositionX() {
@@ -45,9 +56,5 @@ public class Gem {
     
     public Color getColor() {
         return color;
-    }
-    
-    public void setRadius(int radius) {
-        this.radius = radius;
     }
 }
