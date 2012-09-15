@@ -13,6 +13,7 @@ import objects.*;
 public class GameCanvas extends Canvas implements Runnable, KeyListener {
 
     public static boolean GAME_OVER = false;
+    public static int LIVES = 3;
     
     private Sun sun;
     private Planet[] planets;
@@ -170,6 +171,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     
     public void restart() {
         GameCanvas.GAME_OVER = false;
+        GameCanvas.LIVES = 3;
         initialize();
         run();
     }
