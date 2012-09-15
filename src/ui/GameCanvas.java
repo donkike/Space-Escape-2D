@@ -38,8 +38,14 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         gems = new Gem[5];
         for(int j = 0; j < 5; j++) {
-            gems[j] = new Gem((int) (Math.random() * 600 + 100), (int) (Math.random() * 600 + 100), 
-                    Color.CYAN);
+            int x, y, distance = 0;
+            do {
+                x = (int) (Math.random() * 600 + 100);
+                y = (int) (Math.random() * 600 + 100);
+                Point difference = new Point(sun.getPosition().x - x, sun.getPosition().y - y); 
+                distance = difference.x * difference.x + difference.y * difference.y;
+            } while (distance <= sun.getRadius() + 20);
+            gems[j] = new Gem(x, y, Color.CYAN);
         }
         
         stars = new Point[200];
