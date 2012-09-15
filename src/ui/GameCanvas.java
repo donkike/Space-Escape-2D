@@ -103,7 +103,11 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         g.setColor(Color.red);
         g.setFont(new Font("Times New Roman", Font.BOLD, 80));
-        g.drawString("Game Over", getHeight() / 2 - 170, getWidth() / 2 - 60);
+        g.drawString("Game Over", getWidth() / 2 - 170, getHeight() / 2 - 60);
+        
+        g.setColor(Color.white);        
+        g.setFont(new Font("Times New Roman", Font.BOLD, 42));
+        g.drawString("Press Enter to restart", getWidth() / 2 - 160, getHeight() / 2 + 60);
     }
     
     public void checkCollisions() {
@@ -149,7 +153,6 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             sp.accelerate(0.015, direction);
         }
     }
-
     
     public void updateWorld() {
         calculateGravity(sun);         
@@ -158,6 +161,13 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             calculateGravity(planet);            
         }
     }
+    
+    public void restart() {
+        GameCanvas.GAME_OVER = false;
+        initialize();
+        run();
+    }
+
     
     @Override
     public void run() {
@@ -188,16 +198,19 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
             case (KeyEvent.VK_UP): 
-                sp.accelerate(-0.2);
+                sp.accelerate(-0.3);
                 break;
             case (KeyEvent.VK_DOWN):
-                sp.accelerate(0.2);
+                sp.accelerate(0.3);
                 break;
             case (KeyEvent.VK_RIGHT):
                 sp.rotate(Math.toRadians(30));
                 break;
             case (KeyEvent.VK_LEFT):
                 sp.rotate(-Math.toRadians(30));
+                break;
+            case (KeyEvent.VK_ENTER):
+                if (GameCanvas.GAME_OVER) restart();
                 break;
         }
     }
