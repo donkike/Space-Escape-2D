@@ -13,7 +13,9 @@ import objects.*;
 public class GameCanvas extends Canvas implements Runnable, KeyListener {
 
     public static boolean GAME_OVER = false;
+    public static boolean WIN_LEVEL = false;
     public static int LIVES = 3;
+    public static int LEVEL = 1;
     
     private Sun sun;
     private Planet[] planets;
@@ -24,17 +26,24 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     private boolean justCrashed;
     private boolean lostInSpace;
     private Polygon spShape;
-
+    private Polygon mothership;
+    
     public GameCanvas() {  }
     
     public void initialize() {
         
         justCrashed = false;
+        WIN_LEVEL = false;
         
         sun = new Sun(getHeight() / 2, getWidth() / 2, 0.8, 40, Color.orange);
 
-        planets = new Planet[6];
-        for (int i = 0; i < 6; i++) {
+        if(GameCanvas.LEVEL < 6) {
+            planets = new Planet[GameCanvas.LEVEL];
+        } else {
+            planets = new Planet[6];
+        }
+        
+        for (int i = 0; i < planets.length; i++) {
             int radius = i * 50 + 90;
             double angle = Math.random() * 2 * Math.PI;
             planets[i] = new Planet((int)(radius * Math.sin(angle)), (int)(radius * Math.cos(angle)), 
@@ -43,8 +52,8 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                     (int)Math.pow(-1, (int)(Math.random() * 2)), new Point(sun.getPosition().x, sun.getPosition().y));
         }
         
-        gems = new Gem[5];
-        for(int j = 0; j < 5; j++) {
+        gems = new Gem[GameCanvas.LEVEL];
+        for(int j = 0; j < gems.length; j++) {
             int x, y, distance = 0;
             do {
                 x = (int) (Math.random() * 600 + 100);
@@ -63,6 +72,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         sp = new Spaceship(50, getHeight() - 100, Math.toRadians(90), Color.LIGHT_GRAY);
         spShape = sp.getPolygon();
+        mothership = sp.getMothership(new Point(getWidth()-100, 40));
     }
 
     @Override
@@ -105,17 +115,27 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         g.setColor(sp.getColor());
         g.fillPolygon(sp.getPolygon());
+        Point p;
         
         for (int i = 0; i < GameCanvas.LIVES; i++) {
-            Point p = new Point(i * 40 + 40, 40);
+            p = new Point(i * 40 + 40, 40);
             g.drawPolygon(sp.getGeneralShape(p));
         }
+        
+        g.fillPolygon(mothership);
+        
+        g.setColor(Color.white);        
+        g.setFont(new Font("Times New Roman", Font.BOLD, 12));
+        g.drawString("Mothership", getWidth()-130, 45);
         
         if (lostInSpace)
             paintLostInSpace(g);
         
         if (GameCanvas.GAME_OVER)
             paintGameOver(g);
+        
+        if (GameCanvas.WIN_LEVEL)
+            paintWinLevel(g);
         
     }
     
@@ -139,11 +159,42 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         g.setColor(Color.red);
         g.setFont(new Font("Times New Roman", Font.BOLD, 80));
-        g.drawString("Game Over", getWidth() / 2 - 170, getHeight() / 2 - 60);
+        g.drawString("Game Over!", getWidth() / 2 - 170, getHeight() / 2 - 60);
         
         g.setColor(Color.white);        
         g.setFont(new Font("Times New Roman", Font.BOLD, 42));
         g.drawString("Press Enter to restart", getWidth() / 2 - 160, getHeight() / 2 + 60);
+    }
+    
+    public boolean collectedAll() {
+        boolean collected = true;
+        for(Gem gem : gems) {
+            collected = collected && gem.isCollected();
+        }
+        return collected;
+    }
+    
+    public void paintWinLevel(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
+        g.setColor(Color.red);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 80));
+        g.drawString("You Won!", getWidth() / 2 - 170, getHeight() / 2 - 60);
+        
+        g.setColor(Color.white);        
+        g.setFont(new Font("Times New Roman", Font.BOLD, 42));
+        g.drawString("Press Enter to continue", getWidth() / 2 - 160, getHeight() / 2 + 60);
+    }
+    
+    public void paintLevelIncopmplete(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
+        g.setColor(Color.red);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 42));
+        g.drawString("There are still gems", getWidth() / 2 - 170, getHeight() / 2 - 60);
+        g.drawString("out there to collect!", getWidth() / 2 - 160, getHeight() / 2 + 60);
     }
     
     public void checkCollisions() {
@@ -186,6 +237,15 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                     gem.collect();
                 }
             }
+        }
+        for(int i=0; i < p.npoints; i++){
+            if(mothership.contains(p.xpoints[i], p.ypoints[i])) {
+                if (collectedAll()) {
+                    GameCanvas.WIN_LEVEL = true;
+                } else {
+                    paintLevelIncopmplete(getGraphics());
+                }
+            } 
         }
     }
     
@@ -261,7 +321,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         mainThread = new Thread() {
             @Override
             public void run() {
-                while (!GameCanvas.GAME_OVER) {
+                while (!GameCanvas.GAME_OVER && !GameCanvas.WIN_LEVEL) {
                     if (!justCrashed) updateWorld(); // Stops world momentarily after crash
                     validateBoundaries();
                     checkCollisions();
@@ -299,6 +359,10 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 break;
             case (KeyEvent.VK_ENTER):
                 if (GameCanvas.GAME_OVER) restart();
+                if (GameCanvas.WIN_LEVEL) {
+                    GameCanvas.LEVEL++;
+                    restart();
+                }
                 break;
         }
     }

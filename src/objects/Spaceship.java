@@ -37,6 +37,16 @@ public class Spaceship implements Runnable {
         return getGeneralShape(getPosition());
     }
     
+    public Polygon getMothership(Point position) {
+        Polygon polygon = new Polygon();
+        polygon.addPoint(position.x, position.y - 30);
+        polygon.addPoint(position.x + 45, position.y);
+        polygon.addPoint(position.x + 20, position.y + 25);
+        polygon.addPoint(position.x - 20, position.y + 25);
+        polygon.addPoint(position.x - 45, position.y);
+        return polygon;
+    }
+    
     public Polygon getGeneralShape(Point position) {
         Polygon polygon = new Polygon();
         polygon.addPoint(position.x, position.y - 30);
