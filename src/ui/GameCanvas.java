@@ -132,7 +132,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.setFont(new Font("Times New Roman", Font.BOLD, 20));
         g.drawString("Mothership", getWidth() - 150, 50);
         
-        g.drawString("Level " + GameCanvas.LEVEL, getWidth() / 2 - 45, 50);
+        g.drawString("Level " + GameCanvas.LEVEL, getWidth() / 2 - 40, 30);
         
         if (lostInSpace)
             paintLostInSpace(g);
