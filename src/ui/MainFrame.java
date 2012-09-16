@@ -13,6 +13,7 @@ public class MainFrame extends JFrame {
 
     private GameCanvas canvas;
     private Player player;
+    private boolean playing;
     
     public MainFrame() {
         setTitle("Space Escape!");
@@ -31,39 +32,45 @@ public class MainFrame extends JFrame {
         
         addKeyListener(canvas);
         
-        startAudio();
+        playing = true;
+        loopMusic();
         
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                stopAudio();
+                playing = false;
+                player.close();
             }
         });
     }    
 
-    public void startAudio() {
+    public Player initializeAudio() {
         String filename = "resources/audio/background.mp3";
         try {
             FileInputStream fis     = new FileInputStream(filename);
             BufferedInputStream bis = new BufferedInputStream(fis);
-            player = new Player(bis);
+            return new Player(bis);
         }
         catch (Exception e) {
             System.out.println("Problem playing file " + filename);
             System.out.println(e);
         }
-
+        return null;
+        
+    }
+    
+    public void loopMusic() {
         // run in new thread to play in background
         new Thread() {
             public void run() {
-                try { player.play(); }
-                catch (Exception e) { System.out.println(e); }
+                try {
+                    while (playing) {
+                        player = initializeAudio();
+                        player.play();
+                        player.close();
+                    }
+                } catch (Exception e) { System.out.println(e); }
             }
         }.start();
-    }
-    
-    public void stopAudio() {
-        if (player != null)
-            player.close();
     }
     
 }
