@@ -126,7 +126,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         g.fillPolygon(mothership);
         
-        g.setColor(Color.white);        
+        g.setColor(Color.white);
         g.setFont(new Font("Times New Roman", Font.BOLD, 20));
         g.drawString("Mothership", getWidth() - 150, 50);
         
