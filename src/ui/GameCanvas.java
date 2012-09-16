@@ -22,6 +22,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     private Point[] stars;
     private Thread mainThread;
     private boolean justCrashed;
+    private boolean lostInSpace;
     private Polygon spShape;
 
     public GameCanvas() {  }
@@ -109,6 +110,9 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             Point p = new Point(i * 40 + 40, 40);
             g.drawPolygon(sp.getGeneralShape(p));
         }
+        
+        if (lostInSpace)
+            paintLostInSpace(g);
         
         if (GameCanvas.GAME_OVER)
             paintGameOver(g);
@@ -202,8 +206,8 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             public void run() {
                 justCrashed = true;
                 try {
-                    sleep(400);
-                } catch (InterruptedException ex) {
+                    sleep(400); 
+               } catch (InterruptedException ex) {
                     Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 justCrashed = false;
@@ -220,16 +224,23 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     }
     
     public void validateBoundaries() {
-        if (sp.getPosition().x < -60 || sp.getPosition().x > getWidth() + 60 || sp.getPosition().y < -60 || sp.getPosition().y > getHeight() + 60) {
+        if (sp.getPosition().x < -100 || sp.getPosition().x > getWidth() + 100 || sp.getPosition().y < -100 || sp.getPosition().y > getHeight() + 100) {
             if (GameCanvas.LIVES < 1) {
                 GameCanvas.GAME_OVER = true;
             } else {
                 paintLostInSpace(getGraphics());
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                new Thread() {
+                    @Override
+                    public void run() {
+                        lostInSpace = true;                        
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        lostInSpace = false;
+                    }
+                }.start();
                 GameCanvas.LIVES--;
                 sp = new Spaceship(50, getHeight() - 100, Math.toRadians(90), Color.LIGHT_GRAY);
                 sp.run();
@@ -251,7 +262,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             @Override
             public void run() {
                 while (!GameCanvas.GAME_OVER) {
-                    if (!justCrashed) updateWorld();
+                    if (!justCrashed) updateWorld(); // Stops world momentarily after crash
                     validateBoundaries();
                     checkCollisions();
                     repaint();
