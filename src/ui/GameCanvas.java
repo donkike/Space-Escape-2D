@@ -25,6 +25,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     private Thread mainThread;
     private boolean justCrashed;
     private boolean lostInSpace;
+    private boolean gemsMissingInMothership;
     private Polygon spShape;
     private Polygon mothership;
     
@@ -33,6 +34,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     public void initialize() {
         
         justCrashed = false;
+        gemsMissingInMothership = false;
         WIN_LEVEL = false;
         
         sun = new Sun(getHeight() / 2, getWidth() / 2, 0.8, 40, Color.orange);
@@ -125,11 +127,15 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.fillPolygon(mothership);
         
         g.setColor(Color.white);        
-        g.setFont(new Font("Times New Roman", Font.BOLD, 12));
-        g.drawString("Mothership", getWidth()-130, 45);
+        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        g.drawString("Mothership", getWidth() - 150, 50);
         
         if (lostInSpace)
             paintLostInSpace(g);
+        
+        
+        if (gemsMissingInMothership)
+            paintLevelIncomplete(g);
         
         if (GameCanvas.GAME_OVER)
             paintGameOver(g);
@@ -159,11 +165,11 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         g.setColor(Color.red);
         g.setFont(new Font("Times New Roman", Font.BOLD, 80));
-        g.drawString("Game Over!", getWidth() / 2 - 170, getHeight() / 2 - 60);
+        g.drawString("Game Over!", getWidth() / 2 - 200, getHeight() / 2 - 60);
         
         g.setColor(Color.white);        
         g.setFont(new Font("Times New Roman", Font.BOLD, 42));
-        g.drawString("Press Enter to restart", getWidth() / 2 - 160, getHeight() / 2 + 60);
+        g.drawString("Press Enter to restart", getWidth() / 2 - 200, getHeight() / 2 + 60);
     }
     
     public boolean collectedAll() {
@@ -178,13 +184,13 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, getWidth(), getHeight());
         
-        g.setColor(Color.red);
+        g.setColor(Color.green);
         g.setFont(new Font("Times New Roman", Font.BOLD, 80));
-        g.drawString("You Won!", getWidth() / 2 - 170, getHeight() / 2 - 60);
+        g.drawString("All gems collected!", getWidth() / 2 - 300, getHeight() / 2 - 60);
         
         g.setColor(Color.white);        
         g.setFont(new Font("Times New Roman", Font.BOLD, 42));
-        g.drawString("Press Enter to continue", getWidth() / 2 - 160, getHeight() / 2 + 60);
+        g.drawString("Press Enter to continue", getWidth() / 2 - 200, getHeight() / 2 + 60);
     }
     
     public void paintLevelIncomplete(Graphics g) {
@@ -193,8 +199,8 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
         g.setColor(Color.red);
         g.setFont(new Font("Times New Roman", Font.BOLD, 42));
-        g.drawString("There are still gems", getWidth() / 2 - 170, getHeight() / 2 - 60);
-        g.drawString("out there to collect!", getWidth() / 2 - 160, getHeight() / 2 + 60);
+        g.drawString("There are still gems", getWidth() / 2 - 180, getHeight() / 2 - 60);
+        g.drawString("out there to collect!", getWidth() / 2 - 180, getHeight() / 2 + 40);
     }
     
     public void checkCollisions() {
@@ -238,12 +244,14 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 }
             }
         }
+        
+        gemsMissingInMothership = false;
         for(int i=0; i < p.npoints; i++){
             if(mothership.contains(p.xpoints[i], p.ypoints[i])) {
                 if (collectedAll()) {
                     GameCanvas.WIN_LEVEL = true;
                 } else {
-                    paintLevelIncomplete(getGraphics());
+                    gemsMissingInMothership = true;
                 }
             } 
         }
@@ -358,7 +366,10 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 sp.rotate(-Math.toRadians(30));
                 break;
             case (KeyEvent.VK_ENTER):
-                if (GameCanvas.GAME_OVER) restart();
+                if (GameCanvas.GAME_OVER) {
+                    GameCanvas.LEVEL = 1;
+                    restart();
+                }
                 if (GameCanvas.WIN_LEVEL) {
                     GameCanvas.LEVEL++;
                     restart();

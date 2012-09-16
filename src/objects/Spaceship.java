@@ -39,11 +39,11 @@ public class Spaceship implements Runnable {
     
     public Polygon getMothership(Point position) {
         Polygon polygon = new Polygon();
-        polygon.addPoint(position.x, position.y - 30);
-        polygon.addPoint(position.x + 45, position.y);
-        polygon.addPoint(position.x + 20, position.y + 25);
-        polygon.addPoint(position.x - 20, position.y + 25);
-        polygon.addPoint(position.x - 45, position.y);
+        polygon.addPoint(position.x, position.y - 40);
+        polygon.addPoint(position.x + 60, position.y);
+        polygon.addPoint(position.x + 40, position.y + 30);
+        polygon.addPoint(position.x - 40, position.y + 30);
+        polygon.addPoint(position.x - 60, position.y);
         return polygon;
     }
     
