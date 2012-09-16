@@ -22,6 +22,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     private Point[] stars;
     private Thread mainThread;
     private boolean justCrashed;
+    private Polygon spShape;
 
     public GameCanvas() {  }
     
@@ -60,6 +61,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         }
         
         sp = new Spaceship(50, getHeight() - 100, Math.toRadians(90), Color.LIGHT_GRAY);
+        spShape = sp.getPolygon();
     }
 
     @Override
@@ -103,6 +105,11 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.setColor(sp.getColor());
         g.fillPolygon(sp.getPolygon());
         
+        for (int i = 0; i < GameCanvas.LIVES; i++) {
+            Point p = new Point(i * 40 + 40, 40);
+            g.drawPolygon(sp.getGeneralShape(p));
+        }
+        
         if (GameCanvas.GAME_OVER)
             paintGameOver(g);
         
@@ -136,7 +143,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                     difference = planet.getPosition().substract(new Point(p.xpoints[i], p.ypoints[i]));
                     distance = difference.x * difference.x + difference.y * difference.y;
                     if (distance < Math.pow(planet.getRadius(), 2)) {
-                        if (GameCanvas.LIVES <= 1) {
+                        if (GameCanvas.LIVES < 1) {
                             GameCanvas.GAME_OVER = true;
                         } else {
                             difference = planet.getPosition().substract(sp.getPosition());
@@ -186,7 +193,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             public void run() {
                 justCrashed = true;
                 try {
-                    Thread.sleep(400);
+                    sleep(400);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
                 }

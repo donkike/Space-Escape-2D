@@ -33,6 +33,20 @@ public class Spaceship implements Runnable {
         polygon.addPoint(positionX - 10, positionY);
     }
     
+    public Polygon getGeneralShape() {
+        return getGeneralShape(getPosition());
+    }
+    
+    public Polygon getGeneralShape(Point position) {
+        Polygon polygon = new Polygon();
+        polygon.addPoint(position.x, position.y - 30);
+        polygon.addPoint(position.x + 10, position.y);
+        polygon.addPoint(position.x + 8, position.y + 10);
+        polygon.addPoint(position.x - 8, position.y + 10);
+        polygon.addPoint(position.x - 10, position.y);
+        return polygon;
+    }
+    
     public void rotate(double angle) {
         direction += angle;
         TranslationTransformer tt = new TranslationTransformer();
