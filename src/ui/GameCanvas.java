@@ -21,10 +21,14 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     private Spaceship sp;
     private Point[] stars;
     private Thread mainThread;
+    private boolean justCrashed;
 
     public GameCanvas() {  }
     
     public void initialize() {
+        
+        justCrashed = false;
+        
         sun = new Sun(getHeight() / 2, getWidth() / 2, 0.8, 40, Color.orange);
 
         planets = new Planet[6];
@@ -104,8 +108,13 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         
     }
     
-    public void paintGameOver(Graphics g) {        
-        g.setColor(new Color(0, 0, 0, 150));        
+    public void paintCrash(Graphics g) {
+        g.setColor(new Color(255, 0, 0, 100));
+        g.fillRect(0, 0, getWidth(), getHeight());
+    }
+    
+    public void paintGameOver(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, getWidth(), getHeight());
         
         g.setColor(Color.red);
@@ -119,18 +128,33 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     
     public void checkCollisions() {
         Polygon p = sp.getPolygon();
-        double point;
-        for(Planet planet : planets) {
-            for(int i=0; i < p.npoints; i++) {
-                point = Math.pow(p.xpoints[i] - planet.getPosition().x, 2) + Math.pow(p.ypoints[i] - planet.getPosition().y,2);
-                if (point < Math.pow(planet.getRadius(),2)) {
-                    GameCanvas.GAME_OVER = true;
+        Point difference;
+        double distance;
+        if (!justCrashed) {
+            for(Planet planet : planets) {
+                for(int i=0; i < p.npoints; i++) {
+                    difference = planet.getPosition().substract(new Point(p.xpoints[i], p.ypoints[i]));
+                    distance = difference.x * difference.x + difference.y * difference.y;
+                    if (distance < Math.pow(planet.getRadius(), 2)) {
+                        if (GameCanvas.LIVES <= 1) {
+                            GameCanvas.GAME_OVER = true;
+                        } else {
+                            difference = planet.getPosition().substract(sp.getPosition());
+                            double direction = Math.atan2(difference.y, difference.x);
+                            sp.resetAcceleration();
+                            sp.accelerate(-direction, Spaceship.MAX_ACC);
+                            GameCanvas.LIVES--;
+                        }
+                        paintCrash(getGraphics());
+                        beginTemproraryInvulnerability();
+                    }
                 }
             }
         }
         for(int i=0; i < p.npoints; i++) {
-            point = Math.pow(p.xpoints[i] - sun.getPosition().x,2) + Math.pow(p.ypoints[i] - sun.getPosition().y,2);
-            if (point < Math.pow(sun.getRadius(),2)) {
+            difference = new Point(sun.getPosition().x - p.xpoints[i], sun.getPosition().y - p.ypoints[i]);
+            distance = difference.x * difference.x + difference.y * difference.y;
+            if (distance < Math.pow(sun.getRadius(),2)) {
                 GameCanvas.GAME_OVER = true;
             }
         }
@@ -151,14 +175,24 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         double r2 = Math.pow(so.getGravityRadius(), 2);
         if (distance < r2) {
             double direction;
-            if (difference.x != 0) {
-                direction = Math.atan2(difference.y, difference.x);
-            } else {
-                if (difference.y > 0) direction = Math.toRadians(270);
-                else direction = Math.toRadians(90);
-            }
+            direction = Math.atan2(difference.y, difference.x);
             sp.accelerate(0.015, direction);
         }
+    }
+    
+    public void beginTemproraryInvulnerability() {
+        new Thread() {
+            @Override
+            public void run() {
+                justCrashed = true;
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                justCrashed = false;
+            }
+        }.start();
     }
     
     public void updateWorld() {
@@ -183,7 +217,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             @Override
             public void run() {
                 while (!GameCanvas.GAME_OVER) {
-                    updateWorld();
+                    if (!justCrashed) updateWorld();
                     repaint();
                     checkCollisions();
                     try {

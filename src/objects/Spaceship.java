@@ -12,6 +12,8 @@ import util.transformations.TranslationTransformer;
 
 public class Spaceship implements Runnable {
     
+    public static final double MAX_ACC = 1.5;
+    
     private double accX;
     private double accY;
     private double direction;
@@ -49,10 +51,19 @@ public class Spaceship implements Runnable {
     public void accelerate(double delta, double direction) {
         double newAccX = accX + delta * Math.cos(direction);
         double newAccY = accY + delta * Math.sin(direction);
-        if (Math.abs(newAccX) < 1)
+        if (Math.abs(newAccX) <= MAX_ACC)
             accX = newAccX;
-        if (Math.abs(newAccY) < 1)
+        else
+            accX = MAX_ACC * Math.signum(newAccX);
+        if (Math.abs(newAccY) <= MAX_ACC)
             accY = newAccY;
+        else
+            accY = MAX_ACC * Math.signum(newAccY);
+    }
+    
+    public void resetAcceleration() {
+        accX = 0;
+        accY = 0;
     }
     
     public void move() {
