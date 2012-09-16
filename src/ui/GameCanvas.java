@@ -187,7 +187,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         g.drawString("Press Enter to continue", getWidth() / 2 - 160, getHeight() / 2 + 60);
     }
     
-    public void paintLevelIncopmplete(Graphics g) {
+    public void paintLevelIncomplete(Graphics g) {
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, getWidth(), getHeight());
         
@@ -243,7 +243,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 if (collectedAll()) {
                     GameCanvas.WIN_LEVEL = true;
                 } else {
-                    paintLevelIncopmplete(getGraphics());
+                    paintLevelIncomplete(getGraphics());
                 }
             } 
         }
