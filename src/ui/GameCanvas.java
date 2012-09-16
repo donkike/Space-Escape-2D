@@ -226,7 +226,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             } else {
                 paintLostInSpace(getGraphics());
                 try {
-                    mainThread.sleep(2000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
                 }
