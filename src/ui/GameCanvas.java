@@ -50,7 +50,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
                 y = (int) (Math.random() * 600 + 100);
                 Point difference = new Point(sun.getPosition().x - x, sun.getPosition().y - y); 
                 distance = difference.x * difference.x + difference.y * difference.y;
-            } while (distance <= sun.getRadius() + 20);
+            } while (distance <= Math.pow(sun.getRadius() + 20, 2));
             gems[j] = new Gem(x, y, Color.CYAN);
         }
         
@@ -118,6 +118,15 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     public void paintCrash(Graphics g) {
         g.setColor(new Color(255, 0, 0, 100));
         g.fillRect(0, 0, getWidth(), getHeight());
+    }
+    
+    public void paintLostInSpace(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
+        g.setColor(Color.white);        
+        g.setFont(new Font("Times New Roman", Font.BOLD, 42));
+        g.drawString("You got lost in space!", getWidth() / 2 - 180, getHeight() / 2 - 40);
     }
     
     public void paintGameOver(Graphics g) {
@@ -210,6 +219,24 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
         }
     }
     
+    public void validateBoundaries() {
+        if (sp.getPosition().x < -60 || sp.getPosition().x > getWidth() + 60 || sp.getPosition().y < -60 || sp.getPosition().y > getHeight() + 60) {
+            if (GameCanvas.LIVES < 1) {
+                GameCanvas.GAME_OVER = true;
+            } else {
+                paintLostInSpace(getGraphics());
+                try {
+                    mainThread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(GameCanvas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                GameCanvas.LIVES--;
+                sp = new Spaceship(50, getHeight() - 100, Math.toRadians(90), Color.LIGHT_GRAY);
+                sp.run();
+            }
+        }
+    }
+    
     public void restart() {
         GameCanvas.GAME_OVER = false;
         GameCanvas.LIVES = 3;
@@ -225,8 +252,9 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
             public void run() {
                 while (!GameCanvas.GAME_OVER) {
                     if (!justCrashed) updateWorld();
-                    repaint();
+                    validateBoundaries();
                     checkCollisions();
+                    repaint();
                     try {
                         sleep(20);
                     } catch (InterruptedException ex) {
@@ -246,7 +274,7 @@ public class GameCanvas extends Canvas implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
-            case (KeyEvent.VK_UP): 
+            case (KeyEvent.VK_UP):
                 sp.accelerate(-0.3);
                 break;
             case (KeyEvent.VK_DOWN):
